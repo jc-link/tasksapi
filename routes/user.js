@@ -1,27 +1,27 @@
-const { Router } = require('express');
-const { tokenVerify } = require('../controller/authorization');
-const { updateUser, deleteUser, createUser, getAuth } = require('../controller/user');
-const cors = require('cors');
-const router = Router();
+const { Router } = require('express')
+const { tokenVerify } = require('../controller/authorization')
+const { updateUser, deleteUser, createUser, getAuth } = require('../controller/user')
+const cors = require('cors')
+const router = Router()
 
-const whitelist = ['http://localhost:8080'];
+const whitelist = ['http://localhost:8080']
 
 const corsOptions = {
     origin: (origin, callback) => {
         if(whitelist.indexOf(origin) !== -1) {
-            callback(null, true);
+            callback(null, true)
         } else {
-            callback("Error by CORS");
+            callback("Error by CORS")
         }
     }
   }
 
-router.post('/createuser', createUser);
+router.post('/createuser', createUser)
 
-router.get('/getauth', tokenVerify, getAuth);
+router.get('/getauth', tokenVerify, getAuth)
 
-router.put('/updateuser',tokenVerify, updateUser);
+router.put('/updateuser',tokenVerify, updateUser)
 
-router.delete('/', deleteUser);
+router.delete('/deleteUser', tokenVerify, deleteUser)
 
-module.exports = router;
+module.exports = router

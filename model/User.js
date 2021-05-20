@@ -1,22 +1,22 @@
-const mysqlConnection = require('../config/database');
+const mysqlConnection = require('../config/database')
 
 class User {
     constructor(username, userMail, password, authMethod) {
-        this.username = username;
-        this.userMail = userMail;
-        this.password = password;
-        this.authMethod = authMethod;
+        this.username = username
+        this.userMail = userMail
+        this.password = password
+        this.authMethod = authMethod
     }
 
     async createUser(user) {
-        let usernameEval = await this.checkUsername(user.username);
-        let userMailEval = await this.checkMail(user.userMail);
+        let usernameEval = await this.checkUsername(user.username)
+        let userMailEval = await this.checkMail(user.userMail)
 
             return new Promise ((resolve, reject) => {
                 if(usernameEval){
-                    reject({message: "The username already exist!"});
+                    reject({message: "The username already exist!"})
                 } else if(userMailEval) {
-                    reject({message: "The email is already in use!"});
+                    reject({message: "The email is already in use!"})
                 } else {
                     const newUser = {
                         username: user.username,
@@ -26,16 +26,16 @@ class User {
                     }
                     mysqlConnection.query('INSERT INTO user SET ?', newUser, (error) => {
                         if(!error) {
-                            resolve(true);
+                            resolve(true)
                         } else {
-                            console.log(error);
-                            reject(false);
+                            console.log(error)
+                            reject(false)
                         }
-                    });
+                    })
                 }        
 
                 
-            });
+            })
         
         
     }
@@ -44,15 +44,15 @@ class User {
         return new Promise ((resolve, reject) => {
             mysqlConnection.query('SELECT * FROM user where username = ? ', username, (error, rows) => {
                 if(error) {
-                    reject(error);
+                    reject(error)
                 }
                 if(rows.length > 0) {
-                    resolve(rows);
+                    resolve(rows)
                 } else {
-                    reject({message: "Invalid user or password!"});
+                    reject({message: "Invalid user or password!"})
                 }
-            });
-        });
+            })
+        })
 
     }
 
@@ -60,25 +60,25 @@ class User {
         return new Promise((resolve, reject) => {
             mysqlConnection.query('SELECT username FROM user WHERE username = ?', [username], (error, rows, fields) => {
                 if(error) {
-                   reject(false);
+                   reject(false)
                 } 
                 if(rows.length > 0){
-                    resolve(true);
+                    resolve(true)
                 } else {
-                    resolve(false);
+                    resolve(false)
                 }
-            });
-        });
+            })
+        })
     }
 
     checkPassword(username, password) {
         return new Promise((resolve, reject) => {
             mysqlConnection.query('SELECT password FROM user WHERE username = ?', [username], (error, rows) => {
                 if(error) {
-                    reject(false);
+                    reject(false)
                 }
                 if(rows.length > 0) {
-                    console.log(rows);
+                    console.log(rows)
                 }
             })
         })
@@ -88,41 +88,52 @@ class User {
         return new Promise((resolve, reject) => {
             mysqlConnection.query('SELECT user_mail FROM user WHERE user_mail = ?', [mail], (error, rows) => {
                 if(error) {
-                   reject(error);
+                   reject(error)
                 } 
                 if(rows.length > 0){
-                    resolve(true);
+                    resolve(true)
                 } else {
-                    resolve(false);
+                    resolve(false)
                 }
-            });
-        });
+            })
+        })
     }
 
     getAuthentication() {
         return new Promise ((resolve, reject) => {
             mysqlConnection.query('SELECT * FROM auth_method', (error, result) => {
                 if(error == null) {
-                    resolve(result);
+                    resolve(result)
                 } else {
-                    reject(error);
+                    reject(error)
                 }
-            });
-        });
+            })
+        })
     }
 
-    updateUser(user, username) {
-        console.log(user);
+    updateUser(user, userId) {
         return new Promise((resolve, reject) => {
-            mysqlConnection.query('UPDATE user SET ? WHERE username = ?', [user, username], (error, result) => {
+            mysqlConnection.query('UPDATE user SET ? WHERE user_id = ?', [user, userId], (error, result) => {
                 if(error !== null) {
-                    reject(error);
+                    reject(error)
                 } else {
-                    resolve(result);
+                    resolve({message: "User updated!"})
+                }
+            })
+        })
+    }
+
+    deleteUser({ userId }) {
+        return new Promise((resolve, reject) => {
+            mysqlConnection.query('DELETE FROM user WHERE user_id = ?', [userId], (error, result) => {
+                if(error !== null) {
+                    reject(error)
+                } else {
+                    resolve({message: "User Deleted"})
                 }
             })
         })
     }
 }
 
-module.exports = User;
+module.exports = User

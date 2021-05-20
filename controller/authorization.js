@@ -1,9 +1,9 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const Authorization = require('../model/Authorization');
-const { response } = require('express');
+const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
+const Authorization = require('../model/Authorization')
+const { response } = require('express')
 
-const authorization = new Authorization();
+const authorization = new Authorization()
 
 const login = (req, res) => {
 
@@ -14,40 +14,40 @@ const login = (req, res) => {
                 userMail: result[0].user_mail,
                 userId: result[0].user_id
             }
-            const token = tokenGeneration(user);
-            res.json({token});
+            const token = tokenGeneration(user)
+            res.json({token})
         } else {
             res.json({message: "Usuario o contraseña invalidos"})
         }
     }).catch((error) => {
-        res.json(error);
-    });
+        res.json(error)
+    })
     
     
 
 }
 
 const tokenGeneration = (user) => {
-    return jwt.sign(user, process.env.SEED, {expiresIn: '60s'});
+    return jwt.sign(user, process.env.SEED, {expiresIn: '5m'})
 }
 
 const passwordHash = async (password) => {
-    const salt = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10)
+    return await bcrypt.hash(password, salt)
 }
 
 const tokenVerify = (req, res, next) => {
-    let token = req.get('Authorization');
+    let token = req.get('Authorization')
     jwt.verify(token, process.env.SEED, (err, decoded) => {
         if (err) {
             return res.status(401).json({
                 ok: false,
                 err
-            });
+            })
         }
-        req.user = decoded.user;
-        next();
-    });
+        req.user = decoded.user
+        next()
+    })
 }
 
 module.exports = {

@@ -1,8 +1,8 @@
-const { json } = require('express');
-const mysqlConnection = require('../config/database');
-const User = require('./User');
+const { json } = require('express')
+const mysqlConnection = require('../config/database')
+const User = require('./User')
 
-const user = new User();
+const user = new User()
 
 class Authorization {
     
@@ -15,14 +15,14 @@ class Authorization {
         return new Promise((resolve, reject) => {
             user.getUser(username)
             .then((response) => {
-                resolve(response);
+                resolve(response)
             }).catch((error) => {
-                reject(error);
+                reject(error)
             }
-        );
+        )
         })
         
     }
 }
 
-module.exports = Authorization;
+module.exports = Authorization
